@@ -17,14 +17,14 @@ const (
 	TokenExpire = 24 * time.Hour // Время жизни токена
 )
 
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type Admin struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+type Banner struct {
+	BannerID  int    `json:"banner_id"`
+	Title     string `json:"title"`
+	Text      string `json:"text"`
+	URL       string `json:"url"`
+	IsActive  bool   `json:"is_active"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 func CreateToken(role string) (string, error) {
