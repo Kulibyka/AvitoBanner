@@ -55,7 +55,7 @@ func getUserBannerFromDB(db *sql.DB, tagID, featureID int, useLastRevision bool)
             INNER JOIN banner_features bf ON b.id = bf.banner_id
             WHERE bt.tag_id = ? AND bf.feature_id = ?
             ORDER BY b.updated_at DESC
-            LIMIT 1
+            LIMIT 1 
         `
 	} else {
 		query = `
