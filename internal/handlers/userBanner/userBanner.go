@@ -4,6 +4,8 @@ import (
 	"AvitoBanner/internal/auth"
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 	"net/http"
 	"strconv"
 )
@@ -15,8 +17,8 @@ func GetUserBanner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
-
 	tagID, err := strconv.Atoi(r.URL.Query().Get("tag_id"))
+
 	if err != nil {
 		http.Error(w, "Invalid tag_id", http.StatusBadRequest)
 		return
@@ -38,7 +40,7 @@ func GetUserBanner(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	fmt.Println(6)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(banner)
 }
@@ -66,9 +68,9 @@ func getUserBannerFromDB(db *sql.DB, tagID, featureID int, useLastRevision bool)
             LIMIT 1
         `
 	}
-
+	fmt.Println(query)
 	row := db.QueryRow(query, tagID, featureID)
-
+	fmt.Println(row)
 	var banner auth.Banner
 	err := row.Scan(&banner.BannerID, &banner.Title, &banner.Text,
 		&banner.URL, &banner.IsActive, &banner.CreatedAt, &banner.UpdatedAt)

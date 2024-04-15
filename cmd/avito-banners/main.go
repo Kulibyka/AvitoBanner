@@ -7,10 +7,10 @@ import (
 	"AvitoBanner/internal/handlers/bannerId"
 	"AvitoBanner/internal/handlers/login"
 	"AvitoBanner/internal/handlers/userBanner"
-	"AvitoBanner/internal/storage/sqlite"
 	"fmt"
 	"github.com/gorilla/mux"
-	"os"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -18,21 +18,13 @@ func main() {
 	cfg := config.MustLoad()
 	fmt.Println(cfg)
 
-	storage, err := sqlite.Open(cfg.StoragePath)
-	if err != nil {
-		fmt.Errorf("%w", err)
-		os.Exit(1)
-	}
-
-	_ = storage
-
 	// TODO: server
 	router := mux.NewRouter()
 
 	router.HandleFunc("/login", login.Login).Methods("POST")
 
 	router.Handle("/user_banner",
-		auth.CheckAuthorization(userBanner.GetUserBanner, auth.UserRole)).Methods("GET")
+		auth.IsAuthorized(userBanner.GetUserBanner)).Methods("GET")
 	router.Handle("/banner",
 		auth.CheckAuthorization(banner.GetAllBanners, auth.AdminRole)).Methods("GET")
 	router.Handle("/banner",
@@ -42,4 +34,5 @@ func main() {
 	router.Handle("/banner/{id}",
 		auth.CheckAuthorization(bannerId.DeleteBanner, auth.AdminRole)).Methods("DELETE")
 
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
